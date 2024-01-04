@@ -49,7 +49,6 @@ services:
     volumes:
       - ./next_app/src:/app/src
       - ./next_app/public:/app/public
-    restart: always
     expose:
       - 3000:3000
     environment:

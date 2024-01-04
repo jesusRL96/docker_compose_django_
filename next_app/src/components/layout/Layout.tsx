@@ -9,13 +9,26 @@ import {
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
+import Link from "next/link";
 
 const { Header, Content, Sider, Footer } = Layout;
 
-const items1: MenuProps["items"] = ["1", "2", "3"].map((key) => ({
-  key,
-  label: `nav ${key}`,
-}));
+const items1: MenuProps["items"] = [
+  { title: "Forms orientation", link: "/forms/with-orientation" },
+  { title: "Forms disable", link: "/forms/with-disable" },
+  { title: "Forms required mark", link: "/forms/with-required_mark" },
+  { title: "Forms formset", link: "/forms/with-formsets" },
+  { title: "nav 3", link: "" },
+].map((url, index) => {
+  return {
+    key: index,
+    label: (
+      <Link href={url.link}>
+        {url.title}
+      </Link>
+    ),
+  };
+});
 
 const items2: MenuProps["items"] = [
   UserOutlined,

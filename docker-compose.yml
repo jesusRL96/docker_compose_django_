@@ -42,8 +42,25 @@ services:
     environment:
       - NGINX_PORT=${NGINX_PORT:-81}
 
+  next_app:
+    build:
+      context: ./next_app
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./next_app/src:/app/src
+      - ./next_app/public:/app/public
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      - PORT=3000
+    networks:
+      - backend
+      - frontend
+
 volumes:
   static_files:
 
 networks:
   backend:
+  frontend:

@@ -9,14 +9,41 @@ services:
       - POSTGRES_DB=database_name
       - POSTGRES_USER=database_user
       - POSTGRES_PASSWORD=password
+    networks:
+      - backend
+
   web:
     build: ./my_site
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn -b:8000 my_site.wsgi
     volumes:
       - ./my_site:/code
-    ports:
+      - static_files:/code/static/
+    expose:
       - 8000:8000
     env_file:
       - .env
     depends_on:
       - db
+    networks:
+      - backend
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - ${NGINX_PORT:-81}:${NGINX_PORT:-81}
+    volumes:
+      - ./nginx/templates/:/etc/nginx/templates
+      - static_files:/code/static/
+    networks:
+      - backend
+    depends_on:
+      - web
+    environment:
+      - NGINX_PORT=${NGINX_PORT:-81}
+
+volumes:
+  static_files:
+
+networks:
+  backend:

@@ -18,6 +18,7 @@ const items1: MenuProps["items"] = [
   { title: "Forms disable", link: "/forms/with-disable" },
   { title: "Forms required mark", link: "/forms/with-required_mark" },
   { title: "Forms formset", link: "/forms/with-formsets" },
+  { title: "Forms from json", link: "/forms/from-json" },
   { title: "nav 3", link: "" },
 ].map((url, index) => {
   return {

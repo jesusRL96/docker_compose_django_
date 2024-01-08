@@ -1,6 +1,7 @@
 export const formDataExample = [
   {
     name: "form secction 1",
+		isFormset:false,
     flexDirection: "column",
     fields: [
       {
@@ -21,6 +22,7 @@ export const formDataExample = [
   {
     name: "form secction 2",
     flexDirection: "row",
+		isFormset:true,
     fields: [
       {
         name: "campo_3",
@@ -33,7 +35,6 @@ export const formDataExample = [
         label: "campo 4",
         type: "select",
 				mode:"multiple",
-				required: true,
 				style:{ width: 200 },
 				placeholder:"Search to Select",
         options: [

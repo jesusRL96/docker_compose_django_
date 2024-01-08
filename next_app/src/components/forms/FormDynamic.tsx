@@ -1,19 +1,14 @@
 "use client";
-import React, { useState } from "react";
-import { CloseOutlined } from "@ant-design/icons";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
-  Card,
   Form,
   Input,
-  Space,
   Typography,
-  Radio,
   InputNumber,
   Select,
   Tag,
 } from "antd";
-import { throws } from "assert";
 type LayoutType = Parameters<typeof Form>[0]["layout"];
 
 const customizeRequiredMark = (
@@ -47,13 +42,56 @@ const FormDynamic = ({
       requiredMark={customizeRequiredMark}
     >
       {formSectionsData.map((formSection, index) => {
+        const isFormset: boolean = formSection?.isFormset;
+
         return (
           <div key={index}>
             <h3>{formSection.name}</h3>
-            <FormFieldsComponent
-              formFields={formSection.fields}
-              flexDir={formSection.flexDirection}
-            />
+            {isFormset ? (
+              <Form.Item label={formSection.name}>
+                <Form.List name={formSection.name}>
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, ...restField }) => (
+                        <div
+                          key={key}
+                          style={{
+                            display: "flex",
+                            rowGap: 16,
+                            columnGap: 16,
+                            flexDirection: formSection.flexDirection,
+                          }}
+                        >
+                          <FormFieldsComponent
+                            formFields={formSection.fields}
+                            flexDir={formSection.flexDirection}
+                            restField={restField}
+                            name={name}
+                          />
+                          <MinusCircleOutlined onClick={() => remove(name)} />
+                        </div>
+                      ))}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          Add field
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </Form.Item>
+            ) : (
+              <FormFieldsComponent
+                formFields={formSection.fields}
+                flexDir={formSection.flexDirection}
+                restField={{}}
+              />
+            )}
           </div>
         );
       })}
@@ -65,7 +103,9 @@ const FormDynamic = ({
         )}
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit">Submit</Button>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
       </Form.Item>
     </Form>
   );
@@ -74,9 +114,13 @@ const FormDynamic = ({
 const FormFieldsComponent = ({
   formFields,
   flexDir = "column",
+  restField = {},
+  name = "",
 }: {
-  formFields: Array<FormField>,
-  flexDir: string;
+  formFields: Array<FormField>;
+  flexDir: string|undefined;
+  restField: object;
+  name: string;
 }) => {
   return (
     <div
@@ -99,7 +143,13 @@ const FormFieldsComponent = ({
           throw new Error("form field type is not valid");
         }
         return (
-          <Form.Item {...field} key={index}>
+          <Form.Item
+            {...restField}
+            {...field}
+            name={name !== "" ? [name, field.name] : field.name}
+            label={field.label}
+            key={index}
+          >
             {field_component}
           </Form.Item>
         );

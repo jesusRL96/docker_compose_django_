@@ -1,0 +1,18 @@
+export const dynamic = "force-dynamic"; // defaults to auto
+export async function GET(request: Request) {
+  return Response.json({
+    data: {
+      es: {
+        main: {
+          home: "Pagina Inicial",
+          languages: "Idiomas",
+        },
+      },
+      en: {
+        main: {
+          home: "Initial page",
+        },
+      },
+    },
+  });
+}

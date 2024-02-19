@@ -1,14 +1,16 @@
 "use client";
-import { Button, Flex } from "antd";
+import { Button, ConfigProvider, Flex } from "antd";
 import React from "react";
 
 import {
   LaptopOutlined,
   NotificationOutlined,
   UserOutlined,
+  EditOutlined,
+  MoonOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
-import { Breadcrumb, Layout, Menu, theme } from "antd";
+import { Breadcrumb, Layout, Menu, theme, FloatButton } from "antd";
 import Link from "next/link";
 
 const { Header, Content, Sider, Footer } = Layout;
@@ -23,11 +25,7 @@ const items1: MenuProps["items"] = [
 ].map((url, index) => {
   return {
     key: index,
-    label: (
-      <Link href={url.link}>
-        {url.title}
-      </Link>
-    ),
+    label: <Link href={url.link}>{url.title}</Link>,
   };
 });
 
@@ -58,54 +56,77 @@ export default function ComponentLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const [dTheme, setDtheme] = React.useState({
+    algorithm: theme.defaultAlgorithm,
+  });
+  const algorithm =
+    dTheme?.algorithm == theme.defaultAlgorithm
+      ? theme.darkAlgorithm
+      : theme.defaultAlgorithm;
+  const handleDarkMode = () => {
+    setDtheme({ ...dTheme, algorithm: algorithm });
+  };
 
   return (
-    <Layout>
-      <Header style={{ display: "flex", alignItems: "center" }}>
-        <div className="demo-logo" />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={["2"]}
-          items={items1}
-          style={{ flex: 1, minWidth: 0 }}
-        />
-      </Header>
+    <ConfigProvider theme={dTheme}>
       <Layout>
-        <Sider width={200} style={{ background: colorBgContainer }}>
+        <Header style={{ display: "flex", alignItems: "center" }}>
+          <div className="demo-logo" />
           <Menu
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
-            style={{ height: "100%", borderRight: 0 }}
-            items={items2}
+            mode="horizontal"
+            defaultSelectedKeys={["2"]}
+            items={items1}
+            style={{ flex: 1, minWidth: 0 }}
           />
-        </Sider>
-        <Layout style={{ padding: "0 24px 24px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
-          <Content
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-              background: colorBgContainer,
-              borderRadius: borderRadiusLG,
-            }}
-          >
-            {children}
-          </Content>
-          <Footer style={{ textAlign: "center" }}>
-            Ant Design ©{new Date().getFullYear()} Created by Ant UED
-          </Footer>
+        </Header>
+        <Layout>
+          <Sider width={200}>
+            <Menu
+              mode="inline"
+              defaultSelectedKeys={["1"]}
+              defaultOpenKeys={["sub1"]}
+              style={{ height: "100%", borderRight: 0 }}
+              items={items2}
+            />
+          </Sider>
+          <Layout style={{ padding: "0 24px 24px" }}>
+            <Breadcrumb style={{ margin: "16px 0" }}>
+              <Breadcrumb.Item>Home</Breadcrumb.Item>
+              <Breadcrumb.Item>List</Breadcrumb.Item>
+              <Breadcrumb.Item>App</Breadcrumb.Item>
+            </Breadcrumb>
+            <Content
+              style={{
+                padding: 24,
+                margin: 0,
+                minHeight: "100vh",
+              }}
+            >
+              {children}
+              <FloatButton.Group
+                trigger="click"
+                type="primary"
+                style={{ right: 24 }}
+                icon={<EditOutlined />}
+              >
+                <FloatButton />
+                <FloatButton
+                  type={
+                    dTheme?.algorithm === theme.darkAlgorithm
+                      ? "primary"
+                      : "default"
+                  }
+                  icon={<MoonOutlined />}
+                  onClick={handleDarkMode}
+                />
+              </FloatButton.Group>
+            </Content>
+            <Footer style={{ textAlign: "center" }}>
+              Ant Design ©{new Date().getFullYear()} Created by Ant UED
+            </Footer>
+          </Layout>
         </Layout>
       </Layout>
-    </Layout>
+    </ConfigProvider>
   );
 }

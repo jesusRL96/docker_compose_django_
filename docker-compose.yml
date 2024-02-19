@@ -56,6 +56,8 @@ services:
     networks:
       - backend
       - frontend
+    env_file:
+      - ./next_app/.env.local
 
 volumes:
   static_files:
